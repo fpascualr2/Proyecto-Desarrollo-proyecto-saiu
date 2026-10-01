@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router'; // <-- 1. Importar Router
 import { SaiuService } from '../../services/saiu.service';
 
 @Component({
@@ -13,6 +14,7 @@ import { SaiuService } from '../../services/saiu.service';
 export class LoginComponent {
   private fb = inject(FormBuilder);
   private saiuService = inject(SaiuService);
+  private router = inject(Router); // <-- 2. Inyectar Router
 
   loginForm: FormGroup = this.fb.group({
     username: ['', [Validators.required]],
@@ -33,10 +35,11 @@ export class LoginComponent {
     this.saiuService.login({ username, password }).subscribe({
       next: (response) => {
         this.isLoading = false;
-        // Almacenamos el token JWT recibido del backend de FastAPI
         localStorage.setItem('access_token', response.access_token);
         console.log('¡Inicio de sesión exitoso!', response);
-        // Aquí puedes redirigir posteriormente al dashboard o perfil del estudiante
+        
+        // 3. Redirigir al usuario al dashboard
+        this.router.navigate(['/dashboard']);
       },
       error: (err) => {
         this.isLoading = false;
