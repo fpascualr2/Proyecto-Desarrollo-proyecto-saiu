@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Optional, Literal
 from datetime import date
 
@@ -50,3 +50,14 @@ class TramiteGraduacionResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+class HistorialCreate(BaseModel):
+    curso_id: int
+    ciclo_id: int
+    nota: float = Field(..., ge=0.0, le=100.0, description="La nota debe estar entre 0 y 100")
+    estado: str
+    estudiante_id: int
+
+class HistorialUpdate(BaseModel):
+    nota: Optional[float] = Field(None, ge=0.0, le=100.0)
+    estado: Optional[str] = None
