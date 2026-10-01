@@ -1,0 +1,116 @@
+/* Contenedor general de la vista */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f8fafc; /* Fondo gris claro, neutro y no invasivo */
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Tarjeta central del formulario */
+.login-card {
+  background: #ffffff;
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  max-width: 400px;
+  border: 1px solid #e2e8f0;
+}
+
+/* Cabecera de la tarjeta */
+.login-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.login-header h2 {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.03em;
+}
+
+.login-header p {
+  margin: 0.5rem 0 0 0;
+  font-size: 0.875rem;
+  color: #64748b;
+  font-weight: 400;
+}
+
+/* Estructura del formulario */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.form-group input {
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  outline: none;
+  transition: all 0.2s ease;
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
+.form-group input:focus {
+  border-color: #3b82f6;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+}
+
+/* Alerta de error estilizada */
+.error-alert {
+  padding: 0.75rem;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+  font-size: 0.85rem;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: 500;
+}
+
+/* Botón de envío */
+.btn-submit {
+  margin-top: 0.5rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: #0f172a; /* Tono oscuro formal */
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn-submit:hover:not(:disabled) {
+  background-color: #1e293b;
+}
+
+.btn-submit:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.btn-submit:disabled {
+  background-color: #94a3b8;
+  cursor: not-allowed;
+}
