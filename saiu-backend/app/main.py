@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import auth, academico, estudiante  # Cambia a 'estudiantes' si tu archivo se llama así
+from app.routers import auth, academico, estudiante, usuario, docente
 
 app = FastAPI(title="SAIU Backend", version="1.0.0")
 
@@ -21,8 +21,10 @@ app.add_middleware(
 
 # Incluir los routers
 app.include_router(auth.router)
+app.include_router(usuario.router)
 app.include_router(academico.router)
-app.include_router(estudiante.router)  # Asegúrate que coincida con el import de arriba
+app.include_router(estudiante.router)  
+app.include_router(docente.router)
 
 @app.get("/")
 def read_root():

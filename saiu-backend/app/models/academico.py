@@ -44,3 +44,17 @@ class Pensum(Base):
     # Relaciones
     carrera = relationship("Carrera", back_populates="pensum")
     curso = relationship("Curso", back_populates="pensum")
+
+class Seccion(Base):
+    __tablename__ = "secciones"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    curso_id = Column(Integer, ForeignKey("cursos.id", ondelete="CASCADE"), nullable=False)
+    docente_id = Column(Integer, ForeignKey("usuarios.id", ondelete="CASCADE"), nullable=False)
+    ciclo_id = Column(Integer, ForeignKey("ciclos.id", ondelete="CASCADE"), nullable=False)
+    nombre_seccion = Column(String(10), default='A')
+
+    # Relaciones
+    curso = relationship("Curso")
+    docente = relationship("Usuario")
+    ciclo = relationship("Ciclo")

@@ -60,7 +60,7 @@ CREATE TABLE pensum (
     FOREIGN KEY (curso_id) REFERENCES cursos(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
--- Prerrequisitos de cursos
+-- Nueva tabla: Prerrequisitos de cursos
 CREATE TABLE curso_requisitos (
     id INT AUTO_INCREMENT PRIMARY KEY,
     curso_id INT NOT NULL COMMENT 'El curso que exige el requisito',
@@ -81,6 +81,16 @@ CREATE TABLE historial_academico (
     FOREIGN KEY (ciclo_id) REFERENCES ciclos(id)
 ) ENGINE=InnoDB;
 
+CREATE TABLE secciones (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    curso_id INT NOT NULL,
+    docente_id INT NOT NULL COMMENT 'ID del usuario con rol DOCENTE',
+    ciclo_id INT NOT NULL,
+    nombre_seccion VARCHAR(10) DEFAULT 'A' COMMENT 'Ej. Sección A, B',
+    FOREIGN KEY (curso_id) REFERENCES cursos(id) ON DELETE CASCADE,
+    FOREIGN KEY (docente_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+    FOREIGN KEY (ciclo_id) REFERENCES ciclos(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
 
 -- 3. MÓDULO DE GRADUACIÓN
 
@@ -90,7 +100,7 @@ CREATE TABLE opciones_graduacion (
     porcentaje_minimo_avance DECIMAL(5,2) NOT NULL COMMENT 'Ej. 75.00 o 100.00'
 ) ENGINE=InnoDB;
 
--- Trámite de graduación por estudiante
+-- Nueva tabla: Trámite de graduación por estudiante
 CREATE TABLE estudiante_opciones_graduacion (
     id INT AUTO_INCREMENT PRIMARY KEY,
     estudiante_id INT NOT NULL,
@@ -113,3 +123,4 @@ CREATE TABLE auditoria_log (
     detalles TEXT,
     fecha_hora TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
+

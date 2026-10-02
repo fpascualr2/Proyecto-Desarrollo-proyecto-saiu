@@ -42,3 +42,16 @@ class CicloResponse(CicloBase):
 
     class Config:
         from_attributes = True
+
+# --- PENSUM ---
+class PensumCreate(BaseModel):
+    carrera_id: int
+    curso_id: int
+    semestre: int
+
+class PensumResponse(PensumCreate):
+    id: int
+    curso: Optional[CursoResponse] = None  # Para ver el detalle del curso anidado
+
+    class Config:
+        from_attributes = True

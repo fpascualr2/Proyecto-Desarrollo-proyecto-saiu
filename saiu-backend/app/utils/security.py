@@ -60,3 +60,11 @@ def requiere_admin(current_user: Usuario = Depends(get_current_user)):
             detail="Acceso denegado. Se requieren privilegios de administrador para realizar esta acción."
         )
     return current_user
+
+def requiere_docente(current_user: Usuario = Depends(get_current_user)):
+    if current_user.rol not in ['DOCENTE', 'ADMINISTRADOR']:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Acceso denegado. Se requiere rol de Docente."
+        )
+    return current_user

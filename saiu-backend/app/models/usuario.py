@@ -11,3 +11,4 @@ class Usuario(Base):
     email = Column(String(100), unique=True, nullable=False)
     password_hash = Column(String(255), nullable=False)
     rol = Column(Enum('ESTUDIANTE', 'ADMINISTRADOR', 'DOCENTE'), default='ESTUDIANTE')
+    activo = Column(Integer, default=1)  # <--: 1 activo, 0 inactivo
