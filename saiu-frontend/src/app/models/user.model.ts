@@ -9,3 +9,13 @@ export interface UserProfile {
   carrera?: string;
   semestre?: number;
 }
+
+export interface User {
+  id: number;
+  username: string;
+  email: string;
+  nombre: string;
+  apellido: string;
+  rol: 'ADMINISTRADOR' | 'DOCENTE' | 'ESTUDIANTE';
+  activo: boolean;
+}

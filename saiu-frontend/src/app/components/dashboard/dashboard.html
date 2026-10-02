@@ -35,7 +35,7 @@
     </div>
 
     <!-- ================= VISTA EXCLUSIVA: ESTUDIANTE ================= -->
-    <div *ngIf="userProfile && userProfile.rol !== 'ADMINISTRADOR'" class="academic-section">
+    <div *ngIf="userProfile && userProfile.rol === 'ESTUDIANTE'" class="academic-section">
       <div style="margin-bottom: 1.5rem;">
         <h2 style="margin: 0 0 0.25rem 0; color: #0f172a; font-size: 1.5rem;">Panel de Estudiante</h2>
         <p style="margin: 0; color: #64748b; font-size: 0.95rem;">Consulta tu progreso académico y estado curricular actual.</p>
@@ -46,7 +46,7 @@
       </div>
 
       <!-- Tarjeta Principal de Avance -->
-      <div class="progress-card" *ngIf="!isLoadingAvance && avanceAcademico" style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03); border: 1px solid #e2e8f0;">
+      <div class="progress-card" *ngIf="!isLoadingAvance && avanceAcademico" style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; margin-bottom: 2rem;">
         <div class="progress-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 1rem;">
           <div>
             <span style="font-size: 0.85rem; color: #64748b; display: block; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Carrera Registrada</span>
@@ -74,48 +74,232 @@
           </div>
         </div>
       </div>
+
+      <!-- Historial de Notas del Estudiante -->
+      <div style="background: white; padding: 2rem; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+        <h3 style="margin: 0 0 1rem 0; color: #0f172a; font-size: 1.2rem;">Historial Académico y Calificaciones</h3>
+        <div *ngIf="historialEstudiante.length === 0" style="color: #64748b; font-size: 0.9rem;">No hay calificaciones registradas en tu historial todavía.</div>
+        
+        <div *ngIf="historialEstudiante.length > 0" style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem;">
+            <thead>
+              <tr style="border-bottom: 2px solid #e2e8f0; color: #64748b;">
+                <th style="padding: 10px;">Código</th>
+                <th style="padding: 10px;">Curso</th>
+                <th style="padding: 10px;">Créditos</th>
+                <th style="padding: 10px;">Ciclo</th>
+                <th style="padding: 10px;">Nota</th>
+                <th style="padding: 10px;">Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let h of historialEstudiante" style="border-bottom: 1px solid #f1f5f9;">
+                <td style="padding: 10px; font-weight: 600; color: #1e293b;">{{ h.codigo_curso }}</td>
+                <td style="padding: 10px; color: #334155;">{{ h.nombre_curso }}</td>
+                <td style="padding: 10px; color: #64748b;">{{ h.creditos }}</td>
+                <td style="padding: 10px; color: #64748b;">{{ h.ciclo }}</td>
+                <td style="padding: 10px; font-weight: 700; color: #0f172a;">{{ h.nota }}</td>
+                <td style="padding: 10px;">
+                  <span [style.background]="h.estado === 'APROBADO' ? '#dcfce7' : h.estado === 'REPROBADO' ? '#fee2e2' : '#fef3c7'"
+                        [style.color]="h.estado === 'APROBADO' ? '#166534' : h.estado === 'REPROBADO' ? '#991b1b' : '#b45309'"
+                        style="padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 600;">
+                    {{ h.estado }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= VISTA EXCLUSIVA: DOCENTE ================= -->
+    <div *ngIf="userProfile && userProfile.rol === 'DOCENTE'" class="teacher-section">
+      <div style="margin-bottom: 1.5rem;">
+        <h2 style="margin: 0 0 0.25rem 0; color: #0f172a; font-size: 1.5rem;">Panel de Docente</h2>
+        <p style="margin: 0; color: #64748b; font-size: 0.95rem;">Cursos asignados a tu cargo para el ciclo académico activo.</p>
+      </div>
+
+      <div *ngIf="isLoadingCursosDocente" style="padding: 2rem; background: white; border-radius: 12px; border: 1px solid #e2e8f0; text-align: center;">
+        <p style="color: #64748b; margin: 0;">Cargando tus cursos asignados...</p>
+      </div>
+
+      <div *ngIf="!isLoadingCursosDocente">
+        <div *ngIf="cursosDocente.length === 0" style="background: white; padding: 2rem; border-radius: 12px; border: 1px solid #e2e8f0; text-align: center;">
+          <p style="color: #64748b; margin: 0;">No tienes cursos asignados en el ciclo activo actualmente.</p>
+        </div>
+
+        <div *ngIf="cursosDocente.length > 0" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+          <div *ngFor="let curso of cursosDocente" style="background: white; padding: 1.5rem; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                <span style="font-size: 0.75rem; background: #e0f2fe; color: #0369a1; padding: 3px 10px; border-radius: 12px; font-weight: 600;">Sección {{ curso.nombre_seccion }}</span>
+                <span style="font-size: 0.8rem; color: #64748b; font-weight: 500;">{{ curso.creditos }} Créditos</span>
+              </div>
+              <h3 style="margin: 0 0 0.5rem 0; color: #1e293b; font-size: 1.1rem;">{{ curso.nombre_curso }}</h3>
+              <p style="color: #64748b; font-size: 0.85rem; margin: 0 0 1rem 0;">Código: <strong>{{ curso.codigo_curso }}</strong></p>
+            </div>
+            <button style="width: 100%; padding: 10px; border-radius: 6px; border: none; background: #0284c7; color: white; font-weight: 600; cursor: pointer; transition: background 0.2s;">
+              Ingresar Notas
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- ================= VISTA EXCLUSIVA: ADMINISTRADOR ================= -->
     <div *ngIf="userProfile && userProfile.rol === 'ADMINISTRADOR'" class="admin-section">
-      <div style="margin-bottom: 1.5rem;">
-        <h2 style="margin: 0 0 0.25rem 0; color: #0f172a; font-size: 1.5rem;">Panel de Control Administrativo</h2>
-        <p style="margin: 0; color: #64748b; font-size: 0.95rem;">Gestión centralizada del sistema académico y registros institucionales.</p>
+      
+      <!-- SUB-VISTA 1: OVERVIEW (Panel Informativo y Limpio) -->
+      <div *ngIf="adminView === 'overview'">
+        <div style="margin-bottom: 2rem;">
+          <h2 style="margin: 0 0 0.25rem 0; color: #0f172a; font-size: 1.5rem;">Panel de Control Administrativo</h2>
+          <p style="margin: 0; color: #64748b; font-size: 0.95rem;">Gestión centralizada del sistema académico y registros institucionales.</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+          
+          <!-- Módulo: Gestión de Usuarios -->
+          <div style="background: white; padding: 1.75rem; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="width: 42px; height: 42px; background: #e0f2fe; color: #0369a1; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: bold; margin-bottom: 1rem;">👤</div>
+              <h3 style="margin: 0 0 0.5rem 0; color: #1e293b; font-size: 1.15rem;">Creación de Usuarios</h3>
+              <p style="color: #64748b; font-size: 0.9rem; margin: 0 0 1.5rem 0;">Registra nuevos administradores, docentes y estudiantes en el sistema.</p>
+            </div>
+            <button (click)="setAdminView('usuarios')" style="width: 100%; padding: 10px; border-radius: 6px; border: none; background: #0f172a; color: white; font-weight: 600; cursor: pointer; transition: background 0.2s;">
+              Administrar Usuarios
+            </button>
+          </div>
+
+          <!-- Módulo: Gestión de Cursos -->
+          <div style="background: white; padding: 1.75rem; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="width: 42px; height: 42px; background: #fef3c7; color: #b45309; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: bold; margin-bottom: 1rem;">📚</div>
+              <h3 style="margin: 0 0 0.5rem 0; color: #1e293b; font-size: 1.15rem;">Gestión de Cursos</h3>
+              <p style="color: #64748b; font-size: 0.9rem; margin: 0 0 1.5rem 0;">Configura asignaturas y asigna docentes a las secciones.</p>
+            </div>
+            <button (click)="setAdminView('cursos')" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; background: #f8fafc; color: #334155; font-weight: 600; cursor: pointer; transition: background 0.2s;">
+              Ir a Cursos
+            </button>
+          </div>
+
+          <!-- Módulo: Registro de Historial -->
+          <div style="background: white; padding: 1.75rem; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="width: 42px; height: 42px; background: #dcfce7; color: #166534; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: bold; margin-bottom: 1rem;">📊</div>
+              <h3 style="margin: 0 0 0.5rem 0; color: #1e293b; font-size: 1.15rem;">Registro de Historial</h3>
+              <p style="color: #64748b; font-size: 0.9rem; margin: 0 0 1.5rem 0;">Carga notas y avance histórico de los alumnos.</p>
+            </div>
+            <button (click)="setAdminView('historial')" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; background: #f8fafc; color: #334155; font-weight: 600; cursor: pointer; transition: background 0.2s;">
+              Ir a Historiales
+            </button>
+          </div>
+
+        </div>
       </div>
 
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
-        
-        <!-- Apartado 1: Carreras -->
-        <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; display: flex; flex-direction: column; justify-content: space-between;">
+      <!-- SUB-VISTA 2: CREACIÓN DE USUARIOS (Con Username incluido) -->
+      <div *ngIf="adminView === 'usuarios'">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
           <div>
-            <div style="width: 40px; height: 40px; background: #e0f2fe; color: #0369a1; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-bottom: 1rem;">🎓</div>
-            <h3 style="margin: 0 0 0.5rem 0; color: #1e293b; font-size: 1.1rem;">Gestión de Carreras</h3>
-            <p style="color: #64748b; font-size: 0.9rem; margin: 0 0 1.5rem 0;">Administra los planes de estudio, carreras activas y requisitos institucionales.</p>
+            <h2 style="margin: 0 0 0.25rem 0; color: #0f172a; font-size: 1.5rem;">Gestión de Usuarios</h2>
+            <p style="margin: 0; color: #64748b; font-size: 0.95rem;">Registra administradores, docentes o estudiantes en el sistema.</p>
           </div>
-          <button style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; background: #f8fafc; color: #334155; font-weight: 600; cursor: pointer; transition: background 0.2s;">Administrar Carreras</button>
+          <button (click)="setAdminView('overview')" style="padding: 8px 16px; border-radius: 6px; border: 1px solid #cbd5e1; background: white; color: #334155; font-weight: 600; cursor: pointer;">
+            ← Volver al Panel
+          </button>
         </div>
 
-        <!-- Apartado 2: Cursos -->
-        <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; display: flex; flex-direction: column; justify-content: space-between;">
-          <div>
-            <div style="width: 40px; height: 40px; background: #fef3c7; color: #b45309; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-bottom: 1rem;">📚</div>
-            <h3 style="margin: 0 0 0.5rem 0; color: #1e293b; font-size: 1.1rem;">Gestión de Cursos</h3>
-            <p style="color: #64748b; font-size: 0.9rem; margin: 0 0 1.5rem 0;">Configura asignaturas, créditos necesarios y prerrequisitos del pénsum.</p>
+        <div style="background: white; padding: 2.5rem; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; max-width: 800px; margin: 0 auto;">
+          
+          <!-- Alertas de éxito o error -->
+          <div *ngIf="mensajeAdmin" style="background: #dcfce7; border: 1px solid #bbf7d0; color: #166534; padding: 12px 16px; border-radius: 6px; font-size: 0.9rem; margin-bottom: 1.5rem;">
+            {{ mensajeAdmin }}
           </div>
-          <button style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; background: #f8fafc; color: #334155; font-weight: 600; cursor: pointer; transition: background 0.2s;">Administrar Cursos</button>
-        </div>
-
-        <!-- Apartado 3: Historial Académico / Estudiantes -->
-        <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; display: flex; flex-direction: column; justify-content: space-between;">
-          <div>
-            <div style="width: 40px; height: 40px; background: #dcfce7; color: #166534; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-bottom: 1rem;">📊</div>
-            <h3 style="margin: 0 0 0.5rem 0; color: #1e293b; font-size: 1.1rem;">Registro de Historial</h3>
-            <p style="color: #64748b; font-size: 0.9rem; margin: 0 0 1.5rem 0;">Carga masiva o individual de notas y avance histórico de los alumnos.</p>
+          <div *ngIf="errorAdmin" style="background: #fef2f2; border: 1px solid #fca5a5; color: #991b1b; padding: 12px 16px; border-radius: 6px; font-size: 0.9rem; margin-bottom: 1.5rem;">
+            {{ errorAdmin }}
           </div>
-          <button style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; background: #f8fafc; color: #334155; font-weight: 600; cursor: pointer; transition: background 0.2s;">Registrar Historial</button>
-        </div>
 
+          <!-- Formulario -->
+          <form (submit)="crearUsuario(); $event.preventDefault()">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.25rem;">
+              <div>
+                <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #334155; margin-bottom: 0.35rem;">Nombre</label>
+                <input type="text" [(ngModel)]="nuevoUsuario.nombre" name="nombre" placeholder="Ej. Juan" required style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem;">
+              </div>
+              <div>
+                <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #334155; margin-bottom: 0.35rem;">Apellido</label>
+                <input type="text" [(ngModel)]="nuevoUsuario.apellido" name="apellido" placeholder="Ej. Pérez" required style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem;">
+              </div>
+            </div>
+
+            <!-- Campo de Username esencial para el login -->
+            <div style="margin-bottom: 1.25rem;">
+              <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #334155; margin-bottom: 0.35rem;">Nombre de Usuario (Username)</label>
+              <input type="text" [(ngModel)]="nuevoUsuario.username" name="username" placeholder="Ej. jperez" required style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem;">
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.25rem;">
+              <div>
+                <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #334155; margin-bottom: 0.35rem;">Correo Electrónico</label>
+                <input type="email" [(ngModel)]="nuevoUsuario.email" name="email" placeholder="correo@umg.edu.gt" required style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem;">
+              </div>
+              <div>
+                <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #334155; margin-bottom: 0.35rem;">Contraseña Temporal</label>
+                <input type="password" [(ngModel)]="nuevoUsuario.password" name="password" placeholder="••••••••" required style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem;">
+              </div>
+            </div>
+
+            <div style="margin-bottom: 2rem;">
+              <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #334155; margin-bottom: 0.35rem;">Rol del Usuario</label>
+              <select [(ngModel)]="nuevoUsuario.rol" name="rol" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem; background: white;">
+                <option value="DOCENTE">DOCENTE</option>
+                <option value="ESTUDIANTE">ESTUDIANTE</option>
+                <option value="ADMINISTRADOR">ADMINISTRADOR</option>
+              </select>
+            </div>
+
+            <button type="submit" [disabled]="isCreatingUser" style="width: 100%; padding: 12px; border-radius: 6px; border: none; background: #0f172a; color: white; font-weight: 600; cursor: pointer; transition: background 0.2s;">
+              {{ isCreatingUser ? 'Registrando usuario...' : 'Crear Usuario' }}
+            </button>
+          </form>
+        </div>
       </div>
+
+      <!-- SUB-VISTA 3: CURSOS (Preparada) -->
+      <div *ngIf="adminView === 'cursos'">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+          <div>
+            <h2 style="margin: 0 0 0.25rem 0; color: #0f172a; font-size: 1.5rem;">Gestión de Cursos</h2>
+            <p style="margin: 0; color: #64748b; font-size: 0.95rem;">Configura las asignaturas, secciones y pénsum académico.</p>
+          </div>
+          <button (click)="setAdminView('overview')" style="padding: 8px 16px; border-radius: 6px; border: 1px solid #cbd5e1; background: white; color: #334155; font-weight: 600; cursor: pointer;">
+            ← Volver al Panel
+          </button>
+        </div>
+
+        <div style="background: white; padding: 3rem; border-radius: 12px; border: 1px solid #e2e8f0; text-align: center; color: #64748b;">
+          <p style="font-size: 1.1rem; margin: 0;">Módulo de gestión de cursos en desarrollo...</p>
+        </div>
+      </div>
+
+      <!-- SUB-VISTA 4: HISTORIAL (Preparada) -->
+      <div *ngIf="adminView === 'historial'">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+          <div>
+            <h2 style="margin: 0 0 0.25rem 0; color: #0f172a; font-size: 1.5rem;">Registro de Historial</h2>
+            <p style="margin: 0; color: #64748b; font-size: 0.95rem;">Consulta y carga de notas históricas de los estudiantes.</p>
+          </div>
+          <button (click)="setAdminView('overview')" style="padding: 8px 16px; border-radius: 6px; border: 1px solid #cbd5e1; background: white; color: #334155; font-weight: 600; cursor: pointer;">
+            ← Volver al Panel
+          </button>
+        </div>
+
+        <div style="background: white; padding: 3rem; border-radius: 12px; border: 1px solid #e2e8f0; text-align: center; color: #64748b;">
+          <p style="font-size: 1.1rem; margin: 0;">Módulo de registro de historial en desarrollo...</p>
+        </div>
+      </div>
+
     </div>
 
   </main>
