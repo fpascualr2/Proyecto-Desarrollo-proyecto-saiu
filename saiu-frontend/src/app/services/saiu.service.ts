@@ -8,31 +8,26 @@ import { UserProfile } from '../models/user.model';
 })
 export class SaiuService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8000'; // URL directa de tu backend en FastAPI
+  private apiUrl = 'http://localhost:8000'; 
 
-  // Método para obtener el perfil del usuario autenticado
-getMyProfile(): Observable<UserProfile> {
-    let token = '';
-    
-    // Verificamos si estamos en el navegador antes de usar localStorage
-    if (typeof localStorage !== 'undefined') {
-      token = localStorage.getItem('access_token') || '';
-    }
-
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    return this.http.get<UserProfile>(`${this.apiUrl}/auth/me`, { headers });
+  // 1. Obtener perfil (¡Mira qué limpio quedó sin el código del token!)
+  getMyProfile(): Observable<UserProfile> {
+    return this.http.get<UserProfile>(`${this.apiUrl}/auth/me`);
   }
 
-  // Método para iniciar sesión
+  // 2. NUEVO: Obtener el avance académico del estudiante
+  getMiAvance(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/estudiantes/mi-avance`);
+  }
+
+  // 3. Login
   login(credentials: { username: string; password: string }): Observable<any> {
-    // FastAPI suele usar OAuth2PasswordRequestForm que requiere x-www-form-urlencoded
     const body = new URLSearchParams();
     body.set('username', credentials.username);
     body.set('password', credentials.password);
 
     const headers = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
 
-    // CORRECCIÓN: Se cambió /token por /auth/login
     return this.http.post(`${this.apiUrl}/auth/login`, body.toString(), { headers });
   }
 }

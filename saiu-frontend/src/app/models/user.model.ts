@@ -1,9 +1,11 @@
 export interface UserProfile {
   id: number;
-  carnet: string;
-  nombres: string;
-  apellidos: string;
-  correo: string;
-  carrera: string;
-  semestre: number;
+  nombre: string;
+  apellido: string;
+  username: string;
+  email: string;
+  rol: string;
+  carnet?: string;
+  carrera?: string;
+  semestre?: number;
 }

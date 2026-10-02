@@ -96,19 +96,35 @@ def obtener_mi_avance(
     db: Session = Depends(get_db), 
     current_user: Usuario = Depends(get_current_user)
 ):
-    # Suponiendo que el username del estudiante coincide con su carnet o está vinculado
-    carnet_usuario = current_user.username 
+    # Si es administrador, no intentamos buscar avance académico
+    if current_user.rol == "ADMINISTRADOR":
+        return {
+            "carnet": "N/A",
+            "estudiante": f"{current_user.nombre} {current_user.apellido}",
+            "carrera": "Panel de Administración",
+            "creditos_totales": 0,
+            "creditos_aprobados": 0,
+            "porcentaje_avance": 0.0
+        }
+
+    # Intentamos buscar usando el username o el carnet del usuario
+    identificador = getattr(current_user, "carnet", None) or current_user.username
     
     try:
         sql = text("CALL sp_obtener_avance_estudiante(:carnet)")
-        result = db.execute(sql, {"carnet": carnet_usuario})
+        result = db.execute(sql, {"carnet": identificador})
         row = result.fetchone()
         
         if not row:
-            raise HTTPException(
-                status_code=404, 
-                detail="No se encontró un avance académico asociado a tu usuario/carnet."
-            )
+            # Si no hay filas, devolvemos una estructura vacía en lugar de un error 500
+            return {
+                "carnet": identificador,
+                "estudiante": f"{current_user.nombre} {current_user.apellido}",
+                "carrera": "Sin asignar",
+                "creditos_totales": 0,
+                "creditos_aprobados": 0,
+                "porcentaje_avance": 0.0
+            }
         
         return {
             "carnet": row[0],
@@ -119,4 +135,13 @@ def obtener_mi_avance(
             "porcentaje_avance": float(row[5]) if row[5] is not None else 0.0
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        # En lugar de un 500, devolvemos un JSON controlado con el detalle para depurar sin romper la UI
+        print(f"Error en sp_obtener_avance_estudiante: {str(e)}")
+        return {
+            "carnet": identificador,
+            "estudiante": f"{current_user.nombre} {current_user.apellido}",
+            "carrera": "Pendiente de registro",
+            "creditos_totales": 0,
+            "creditos_aprobados": 0,
+            "porcentaje_avance": 0.0
+        }

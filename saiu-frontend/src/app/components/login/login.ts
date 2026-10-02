@@ -34,12 +34,14 @@ export class LoginComponent {
 
     this.saiuService.login({ username, password }).subscribe({
       next: (response) => {
-        this.isLoading = false;
+       this.isLoading = false;
         localStorage.setItem('access_token', response.access_token);
         console.log('¡Inicio de sesión exitoso!', response);
         
-        // 3. Redirigir al usuario al dashboard
-        this.router.navigate(['/dashboard']);
+        // Damos un micro-respiro para asegurar que el storage sincronice antes de entrar al dashboard
+        setTimeout(() => {
+          this.router.navigate(['/dashboard']);
+        }, 50);
       },
       error: (err) => {
         this.isLoading = false;
